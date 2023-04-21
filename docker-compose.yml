@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+    db:
+        image: mysql
+        container_name: mysql_db
+        command: --default-authentication-plugin=mysql_native_password
+        restart: on-failure
+        volumes:
+            - db-data:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+
+    phpmyadmin:
+        image: phpmyadmin:latest
+        container_name: phpMyAdmin_mysql
+        restart: on-failure
+        depends_on:
+        # db在这里是文件的名字需要更换到post跟ajax的servername的名字更改为db
+            - db
+        ports:
+            - 8090:80
+        environment:
+            PMA_HOST: db
+            UPLOAD_LIMIT: 300M
+
+    php:
+        image: dekpo/my-custom-php
+        container_name: php
+        depends_on:
+            - db
+        ports:
+            - 80:80
+        volumes:
+        # 这里的htdocs对应的是创建的文件名字
+            - ./htdocs:/var/www/html/
+
+volumes:
+    db-data: null

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de contact</title>
+    <style>
+        body {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            background-image: linear-gradient(180deg, white, rgb(72, 72, 143));
+        }
+
+        label,
+        input,
+        textarea,
+        select {
+            display: block;
+            padding: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input:invalid,
+        select:invalid {
+            border: 2px red solid;
+        }
+    </style>
+</head>
+
+<body>
+    <form enctype="multipart/form-data" action="./post.php" method="post">
+        <label for="nom">Nom:&nbsp;
+            <input placeholder="Votre nom" type="text" name="nom" id="nom" required>
+        </label>
+        <label for="prenom">Prénom:&nbsp;
+            <input placeholder="Votre prénom" type="text" name="prenom" id="prenom" required>
+        </label>
+        <label for="email">Email:&nbsp;
+            <input placeholder="Votre email" type="email" name="email" id="email" required>
+        </label>
+        <label for="adresse">Adresse:&nbsp;
+            <input placeholder="Votre adresse postale" type="text" name="adresse" id="adresse" required>
+        </label>
+        <label for="code_postal">Code postal:&nbsp;
+            <input placeholder="Votre code postal" type="text" name="code_postal" id="code_postal" required>
+        </label>
+
+
+
+
+        <label for="ville">Ville:&nbsp;
+            <!-- <input placeholder="Votre ville" type="text" name="ville" id="ville" required> -->
+            <!-- menu roulant -->
+            <select name="ville" id="resultat">
+                <option value="">Veuillez indiquer le code postal</option>
+
+            </select>
+        </label>
+        <label for="message">Message:&nbsp;
+            <textarea placeholder="Votre message" name="message" id="message" cols="30" rows="10"></textarea>
+        </label>
+        <label for="curriculum">Curriculum:&nbsp;
+            <input placeholder="Votre curriculum vitea" type="file" name="curriculum" id="curriculum">
+        </label>
+        <input type="submit" value="Envoyer">
+    </form>
+
+    <script>
+        function getData(data) {
+            let code_postal = document.getElementById("code_postal").value;
+            if (code_postal.length > 2) {
+                fetch('./ajax.php?cp=' + code_postal)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (json) {
+                        document.getElementById("resultat").innerHTML = "";
+                        for (const item of json) {
+                            document.getElementById("resultat").innerHTML += "<option>" + item["ville_nom_reel"] + "</option>";
+                            console.log(item);
+                        }
+                        console.log(json);
+                        // console.log(json['value']); meme 
+                    });
+            }
+        }
+        document.getElementById("code_postal").addEventListener("keyup", getData);
+    </script>
+</body>
+
+</html>
